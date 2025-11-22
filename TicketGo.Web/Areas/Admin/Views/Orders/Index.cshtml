@@ -1,0 +1,74 @@
+﻿@model IEnumerable<TicketGo.Application.DTOs.OrderDto>
+
+@{
+    ViewData["Title"] = "Quản lý hóa đơn";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+    int i = 0; // Initialize the counter for numbering rows
+}
+
+<div class="flex items-center justify-center bg-gray-100 dark:bg-gray-900 p-4">
+    <div class="w-full h-[80vh] flex flex-col bg-white dark:bg-gray-800 rounded-2xl shadow-xl overflow-hidden">
+        <!-- Header -->
+        <div class="flex-shrink-0 p-6 border-b border-gray-200 dark:border-gray-700">
+            <h1 class="text-2xl font-bold text-gray-800 dark:text-white">Quản Lý Hóa Đơn</h1>
+        </div>
+
+        <!-- Scrollable Table -->
+        <div class="flex-1 overflow-y-auto">
+            <table class="min-w-full table-auto border-collapse">
+                <thead class="sticky top-0 bg-gray-50 dark:bg-gray-800">
+                    <tr class="text-left">
+                        <th class="p-4 text-sm font-bold text-lime-400 cursor-pointer"><div class="flex items-center hover:font-extrabold">#</div></th>
+                        <th class="p-4 text-sm font-bold text-lime-400 cursor-pointer"><div class="flex items-center hover:font-extrabold">Đơn Giá</div></th>
+                        <th class="p-4 text-sm font-bold text-lime-400 cursor-pointer"><div class="flex items-center hover:font-extrabold">Ngày Đặt Hàng</div></th>
+                        <th class="p-4 text-sm font-bold text-lime-400 cursor-pointer"><div class="flex items-center hover:font-extrabold">Thông Tin Vé</div></th>
+                        <th class="p-4 text-sm font-bold text-lime-400 cursor-pointer"><div class="flex items-center hover:font-extrabold">Tên Khách Hàng</div></th>
+                        <th class="p-4 text-sm font-bold text-lime-400 cursor-pointer"><div class="flex items-center hover:font-extrabold">Điện Thoại</div></th>
+                        <th class="p-4 text-sm font-bold text-lime-400 cursor-pointer"><div class="flex items-center hover:font-extrabold">Mã Khách Hàng</div></th>
+                        <th class="p-4 text-sm font-bold text-lime-400 cursor-pointer"><div class="flex items-center hover:font-extrabold">Thanh Toán</div></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr class="border-y dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700">
+                            <td class="p-4 text-sm text-gray-700 dark:text-white">@{ i++; } @i</td>
+                            <td class="p-4 text-sm text-gray-700 dark:text-white">@Html.DisplayFor(modelItem => item.TotalPrice)</td>
+                            <td class="p-4 text-sm text-gray-700 dark:text-white">@Html.DisplayFor(modelItem => item.DateOrder)</td>
+                            <td class="p-4 text-xs text-gray-700 dark:text-white">
+                                <div class="space-y-1">
+                                    <p><span class="font-semibold text-gray-900 dark:text-gray-100">Chuyến:</span> @(!string.IsNullOrWhiteSpace(item.TrainName) ? item.TrainName : "—")</p>
+                                    <p><span class="font-semibold text-gray-900 dark:text-gray-100">Tuyến:</span> @((!string.IsNullOrWhiteSpace(item.PointStart) && !string.IsNullOrWhiteSpace(item.PointEnd)) ? $"{item.PointStart} → {item.PointEnd}" : "—")</p>
+                                    <p><span class="font-semibold text-gray-900 dark:text-gray-100">Khởi hành:</span> @(item.DepartureTime.HasValue ? item.DepartureTime.Value.ToString("dd/MM/yyyy HH:mm") : "—")</p>
+                                    <p><span class="font-semibold text-gray-900 dark:text-gray-100">Ghế:</span> @(item.ListSeats != null && item.ListSeats.Any() ? string.Join(", ", item.ListSeats) : "—")</p>
+                                    <p><span class="font-semibold text-gray-900 dark:text-gray-100">Loại xe:</span> @(!string.IsNullOrWhiteSpace(item.VehicleType) ? item.VehicleType : "—")</p>
+                                </div>
+                            </td>
+                            <td class="p-4 text-sm text-gray-700 dark:text-white">@Html.DisplayFor(modelItem => item.NameCus)</td>
+                            <td class="p-4 text-sm text-gray-700 dark:text-white">@Html.DisplayFor(modelItem => item.Phone)</td>
+                            <td class="p-4 text-sm text-gray-700 dark:text-white">@Html.DisplayFor(modelItem => item.IdAccount)</td>
+                            <td class="p-4 text-sm text-lime-400">Đã thanh toán</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Cấu hình Toastr
+        toastr.options = {
+            positionClass: 'toast-bottom-right',
+            progressBar: true,
+            timeOut: 5000
+        };
+
+        // Hiển thị thông báo từ TempData
+        const successMessage = '@TempData["SuccessMessage"]';
+        if (successMessage) {
+            toastr.success(successMessage);
+        }
+    </script>
+}

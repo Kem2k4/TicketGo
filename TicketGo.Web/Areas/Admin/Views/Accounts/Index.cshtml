@@ -1,0 +1,389 @@
+﻿@model IEnumerable<TicketGo.Application.DTOs.AccountDto>
+
+@{
+    ViewData["Title"] = "Danh sách tài khoản";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+    int i = 0;
+}
+
+<div class="flex items-center justify-center bg-gray-100 dark:bg-gray-900 p-4">
+    <div class="w-full h-[80vh] flex flex-col bg-white dark:bg-gray-800 rounded-2xl shadow-xl overflow-hidden">
+        <!-- Header -->
+        <div class="flex-shrink-0 p-6 border-b border-gray-200 dark:border-gray-700">
+            <div class="flex justify-between items-center">
+                <h1 class="text-2xl font-bold text-gray-800 dark:text-white">Danh Sách Tài Khoản</h1>
+                <button id="createModalToggle" class="flex items-center px-4 py-2 bg-lime-400 text-white text-sm font-semibold rounded-lg hover:bg-lime-500 transition ml-8">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                    </svg>
+                    Thêm Tài Khoản
+                </button>
+            </div>
+        </div>
+
+        <!-- Scrollable Table -->
+        <div class="flex-1 overflow-y-auto">
+            <table class="min-w-full table-auto border-collapse">
+                <thead class="sticky top-0 bg-gray-50 dark:bg-gray-800">
+                    <tr class="text-left">
+                        <th class="p-4 text-sm font-bold text-lime-400 cursor-pointer"><div class="flex items-center hover:font-extrabold">#</div></th>
+                        <th class="p-4 text-sm font-bold text-lime-400 cursor-pointer"><div class="flex items-center hover:font-extrabold">Số Điện Thoại</div></th>
+                        <th class="p-4 text-sm font-bold text-lime-400 cursor-pointer"><div class="flex items-center hover:font-extrabold">Email</div></th>
+                        <th class="p-4 text-sm font-bold text-lime-400 cursor-pointer"><div class="flex items-center hover:font-extrabold">Giới Tính</div></th>
+                        <th class="p-4 text-sm font-bold text-lime-400 cursor-pointer"><div class="flex items-center hover:font-extrabold">Ngày Sinh</div></th>
+                        <th class="p-4 text-sm font-bold text-lime-400 cursor-pointer"><div class="flex items-center hover:font-extrabold">Xác thực</div></th>
+                        <th class="p-4 text-sm font-bold text-lime-400 cursor-pointer"><div class="flex items-center hover:font-extrabold">Vai Trò</div></th>
+                        <th class="p-4 text-sm font-bold text-lime-400"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr class="border-y dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700">
+                            <td class="p-4 text-sm text-gray-700 dark:text-white">@{ i++; } @i</td>
+                            <td class="p-4 text-sm text-gray-700 dark:text-white">@Html.DisplayFor(modelItem => item.Phone)</td>
+                            <td class="p-4 text-sm text-gray-700 dark:text-white">@Html.DisplayFor(modelItem => item.Email)</td>
+                            <td class="p-4 text-sm text-gray-700 dark:text-white">@(item.Sex == true ? "Nam" : item.Sex == false ? "Nữ" : "")</td>
+                            <td class="p-4 text-sm text-gray-700 dark:text-white">@item.DateOfBirth?.ToString("dd-MM-yyyy")</td>
+                            <td class="p-4 text-sm text-gray-700 dark:text-white">@(item.IsEmailConfirmed == true ? "Đã xác thực":item.IsEmailConfirmed == false ? "Chưa xác thực": "Không xác định") </td>
+                            <td class="p-4 text-sm text-gray-700 dark:text-white">@Html.DisplayFor(modelItem => item.RoleName)</td>
+                            <td class="p-4 flex space-x-2">
+                                <button class="edit-btn flex items-center justify-center text-gray-600 dark:text-gray-300 hover:text-lime-400 dark:hover:text-lime-400 w-8 h-8 rounded-full hover:bg-navy-600" 
+                                        data-id="@item.IdAccount" 
+                                        data-phone="@item.Phone" 
+                                        data-email="@item.Email" 
+                                        data-sex="@item.Sex.ToString().ToLower()" 
+                                        data-dob="@(item.DateOfBirth.HasValue ? item.DateOfBirth.Value.ToString("yyyy-MM-dd") : "")" 
+                                        data-role="@item.RoleName.ToLower()" 
+                                        title="Sửa">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                                    </svg>
+                                </button>
+                                <button class="delete-btn flex items-center justify-center text-gray-600 dark:text-gray-300 hover:text-lime-400 dark:hover:text-lime-400 w-8 h-8 rounded-full hover:bg-navy-600" 
+                                        data-id="@item.IdAccount" 
+                                        data-url="@Url.Action("Delete", "Accounts", new { area = "Admin", id = item.IdAccount })" 
+                                        title="Xóa">
+                                    <svg class="w-5 h-5 text-lime-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5-4h4M10 10v6m4-6v6M5 7h14"></path>
+                                    </svg>
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Create/Edit Modal -->
+    <div id="createModal" class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 hidden">
+        <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-6 w-full max-w-md max-h-[80vh] overflow-y-auto shadow-lg">
+            <h2 id="modalTitle" class="text-xl font-bold text-gray-800 dark:text-white mb-4">Thêm Tài Khoản Mới</h2>
+            <form id="accountForm" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" id="idAccount" name="IdAccount" />
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2" for="phone">Số Điện Thoại <span class="text-lime-400">*</span></label>
+                    <div class="relative">
+                        <input type="text" id="phone" name="Phone" class="w-full pt-3 pb-3 pr-3 pl-10 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-lime-400" 
+                               required pattern="[0-9]{10}" title="Số điện thoại phải gồm 10 chữ số" placeholder="Nhập số điện thoại" />
+                        <svg class="absolute left-3 top-1/3 -translate-y-1/2 w-5 h-5 text-lime-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h18M9 3v2m6-2v2M9 19v2m6-2v2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"/>
+                        </svg>
+                    </div>
+                    <p id="phoneError" class="text-sm text-lime-400 mt-1 hidden"></p>
+                    @if (ViewData.ModelState.ContainsKey("Phone"))
+                    {
+                        <p class="text-sm text-lime-400 mt-1">@ViewData.ModelState["Phone"]?.Errors.FirstOrDefault()?.ErrorMessage</p>
+                    }
+                </div>
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2" for="email">Email <span class="text-lime-400">*</span></label>
+                    <div class="relative">
+                        <input type="email" id="email" name="Email" class="w-full pt-3 pb-3 pr-3 pl-10 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-lime-400" 
+                               required placeholder="Nhập email" />
+                        <svg class="absolute left-3 top-1/3 -translate-y-1/2 w-5 h-5 text-lime-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"/>
+                        </svg>
+                    </div>
+                    <p id="emailError" class="text-sm text-lime-400 mt-1 hidden"></p>
+                    @if (ViewData.ModelState.ContainsKey("Email"))
+                    {
+                        <p class="text-sm text-lime-400 mt-1">@ViewData.ModelState["Email"]?.Errors.FirstOrDefault()?.ErrorMessage</p>
+                    }
+                </div>
+                <div class="mb-4" id="passwordField">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2" for="password">Mật Khẩu <span class="text-lime-400">*</span></label>
+                    <div class="relative">
+                        <input type="password" id="password" name="Password" class="w-full pt-3 pb-3 pr-3 pl-10 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-lime-400" 
+                               minlength="6" placeholder="Nhập mật khẩu" />
+                        <svg class="absolute left-3 top-1/3 -translate-y-1/2 w-5 h-5 text-lime-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 11c0-1.657 1.343-3 3-3s3 1.343 3 3-1.343 3-3 3-3-1.343-3-3zm0 0c0-1.657-1.343-3-3-3s-3 1.343-3 3 1.343 3 3 3 3-1.343 3-3zm-7 4c0-1.657 1.343-3 3-3h8c1.657 0 3 1.343 3 3v2H5v-2z"/>
+                        </svg>
+                    </div>
+                    <p id="passwordError" class="text-sm text-lime-400 mt-1 hidden"></p>
+                    @if (ViewData.ModelState.ContainsKey("Password"))
+                    {
+                        <p class="text-sm text-lime-400 mt-1">@ViewData.ModelState["Password"]?.Errors.FirstOrDefault()?.ErrorMessage</p>
+                    }
+                </div>
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2" for="sex">Giới Tính <span class="text-lime-400">*</span></label>
+                    <div class="relative">
+                        <select id="sex" name="Sex" class="w-full pt-3 pb-3 pr-3 pl-10 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-lime-400" required>
+                            <option value="false">Nam</option>
+                            <option value="true">Nữ</option>
+                        </select>
+                        <svg class="absolute left-3 top-1/3 -translate-y-1/2 w-5 h-5 text-lime-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2"/>
+                        </svg>
+                    </div>
+                    <p id="sexError" class="text-sm text-lime-400 mt-1 hidden"></p>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2" for="dateOfBirth">Ngày Sinh <span class="text-lime-400">*</span></label>
+                    <div class="relative">
+                        <input type="date" id="dateOfBirth" name="DateOfBirth" class="w-full pt-3 pb-3 pr-3 pl-10 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-lime-400" 
+                               required />
+                        <svg class="absolute left-3 top-1/3 -translate-y-1/2 w-5 h-5 text-lime-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                        </svg>
+                    </div>
+                    <p id="dateOfBirthError" class="text-sm text-lime-400 mt-1 hidden"></p>
+                    @if (ViewData.ModelState.ContainsKey("DateOfBirth"))
+                    {
+                        <p class="text-sm text-lime-400 mt-1">@ViewData.ModelState["DateOfBirth"]?.Errors.FirstOrDefault()?.ErrorMessage</p>
+                    }
+                </div>
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2" for="roleName">Vai Trò <span class="text-lime-400">*</span></label>
+                    <div class="relative">
+                        <select id="roleName" name="RoleName" class="w-full pt-3 pb-3 pr-3 pl-10 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-lime-400" required>
+                            <option value="customer">Customer</option>
+                            <option value="admin">Admin</option>
+                        </select>
+                        <svg class="absolute left-3 top-1/3 -translate-y-1/2 w-5 h-5 text-lime-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 11c0-1.657 1.343-3 3-3s3 1.343 3 3-1.343 3-3 3-3-1.343-3-3zm0 0c0-1.657-1.343-3-3-3s-3 1.343-3 3 1.343 3 3 3 3-1.343 3-3zm-7 4c0-1.657 1.343-3 3-3h8c1.657 0 3 1.343 3 3v2H5v-2z"/>
+                        </svg>
+                    </div>
+                    <p id="roleNameError" class="text-sm text-lime-400 mt-1 hidden"></p>
+                </div>
+                <div class="flex justify-end space-x-2">
+                    <button type="button" id="closeModal" class="px-4 py-2 text-white rounded-lg hover:bg-gray-600 transition">Hủy</button>
+                    <button type="submit" id="submitButton" class="px-12 py-2 bg-lime-400 text-white rounded-lg hover:bg-lime-500 transition">Thêm</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div id="deleteModal" class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 hidden">
+        <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-6 w-full max-w-sm shadow-lg">
+            <h2 class="text-lg font-bold text-gray-800 dark:text-white mb-4">Xác Nhận Xóa</h2>
+            <p class="text-sm text-gray-600 dark:text-gray-300 mb-6">Bạn có chắc chắn muốn xóa tài khoản này?</p>
+            <form asp-action="Delete" asp-controller="Accounts" asp-area="Admin" id="deleteForm" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="id" id="deleteId" />
+                <div class="flex justify-end space-x-2">
+                    <button type="button" id="cancelDelete" class="px-4 py-2 text-white rounded-lg hover:bg-gray-600 transition">Hủy</button>
+                    <button type="submit" id="confirmDelete" class="px-4 py-2 bg-lime-400 text-white rounded-lg hover:bg-lime-500 transition">Xóa</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <script>
+        // Toastr configuration
+        toastr.options = {
+            positionClass: 'toast-bottom-right',
+            progressBar: true,
+            timeOut: 5000
+        };
+
+        // Display success or error message from TempData
+        const successMessage = '@TempData["SuccessMessage"]';
+        const errorMessage = '@TempData["ErrorMessage"]';
+        if (successMessage) {
+            toastr.success(successMessage);
+        }
+        if (errorMessage) {
+            toastr.error(errorMessage);
+        }
+
+        // Create/Edit Modal
+        const createModal = document.getElementById('createModal');
+        const createModalToggle = document.getElementById('createModalToggle');
+        const closeModal = document.getElementById('closeModal');
+        const accountForm = document.getElementById('accountForm');
+        const modalTitle = document.getElementById('modalTitle');
+        const submitButton = document.getElementById('submitButton');
+        const idAccount = document.getElementById('idAccount');
+        const phone = document.getElementById('phone');
+        const email = document.getElementById('email');
+        const password = document.getElementById('password');
+        const sex = document.getElementById('sex');
+        const dateOfBirth = document.getElementById('dateOfBirth');
+        const roleName = document.getElementById('roleName');
+        const passwordField = document.getElementById('passwordField');
+
+        // Mở modal để tạo mới
+        createModalToggle.addEventListener('click', () => {
+            resetModal('create');
+            createModal.classList.remove('hidden');
+        });
+
+        // Đóng modal
+        closeModal.addEventListener('click', () => {
+            createModal.classList.add('hidden');
+        });
+
+        // Đóng modal khi nhấp ra ngoài
+        createModal.addEventListener('click', (e) => {
+            if (e.target === createModal) {
+                createModal.classList.add('hidden');
+            }
+        });
+
+        // Hàm reset modal
+        function resetModal(mode = 'create') {
+            // Reset các thông báo lỗi
+            document.getElementById('phoneError').classList.add('hidden');
+            document.getElementById('emailError').classList.add('hidden');
+            document.getElementById('passwordError').classList.add('hidden');
+            document.getElementById('sexError').classList.add('hidden');
+            document.getElementById('dateOfBirthError').classList.add('hidden');
+            document.getElementById('roleNameError').classList.add('hidden');
+
+            if (mode === 'create') {
+                // Chế độ tạo mới: reset form và đặt các giá trị mặc định
+                accountForm.reset();
+                idAccount.value = '';
+                modalTitle.textContent = 'Thêm Tài Khoản Mới';
+                submitButton.textContent = 'Thêm';
+                accountForm.action = '@Url.Action("Create", "Accounts", new { area = "Admin" })';
+                passwordField.classList.remove('hidden');
+                password.required = true;
+            } else {
+                // Chế độ chỉnh sửa: không reset form, chỉ cập nhật tiêu đề và action
+                modalTitle.textContent = 'Chỉnh Sửa Tài Khoản';
+                submitButton.textContent = 'Sửa';
+                accountForm.action = '@Url.Action("Edit", "Accounts", new { area = "Admin" })';
+                passwordField.classList.add('hidden');
+                password.required = false;
+            }
+        }
+
+        // Form validation
+        accountForm.addEventListener('submit', (e) => {
+            const phoneError = document.getElementById('phoneError');
+            const emailError = document.getElementById('emailError');
+            const passwordError = document.getElementById('passwordError');
+            const sexError = document.getElementById('sexError');
+            const dateOfBirthError = document.getElementById('dateOfBirthError');
+            const roleNameError = document.getElementById('roleNameError');
+            let isValid = true;
+
+            phoneError.classList.add('hidden');
+            emailError.classList.add('hidden');
+            passwordError.classList.add('hidden');
+            sexError.classList.add('hidden');
+            dateOfBirthError.classList.add('hidden');
+            roleNameError.classList.add('hidden');
+
+            if (!phone.value.match(/^[0-9]{10}$/)) {
+                phoneError.textContent = 'Số điện thoại phải gồm 10 chữ số';
+                phoneError.classList.remove('hidden');
+                isValid = false;
+            }
+            if (!email.value) {
+                emailError.textContent = 'Email không hợp lệ';
+                emailError.classList.remove('hidden');
+                isValid = false;
+            }
+            if (modalTitle.textContent === 'Thêm Tài Khoản Mới' && (!password.value || password.value.length < 6)) {
+                passwordError.textContent = 'Mật khẩu phải ít nhất 6 ký tự';
+                passwordError.classList.remove('hidden');
+                isValid = false;
+            }
+            if (!sex.value) {
+                sexError.textContent = 'Vui lòng chọn giới tính';
+                sexError.classList.remove('hidden');
+                isValid = false;
+            }
+            if (!dateOfBirth.value) {
+                dateOfBirthError.textContent = 'Vui lòng chọn ngày sinh';
+                dateOfBirthError.classList.remove('hidden');
+                isValid = false;
+            }
+            if (!['customer', 'admin'].includes(roleName.value.toLowerCase())) {
+                roleNameError.textContent = 'Vai trò phải là Customer hoặc Admin';
+                roleNameError.classList.remove('hidden');
+                isValid = false;
+            }
+
+            if (!isValid) {
+                e.preventDefault();
+            }
+        });
+
+        // Xử lý nút chỉnh sửa
+        document.querySelectorAll('.edit-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                // Gọi resetModal ở chế độ chỉnh sửa
+                resetModal('edit');
+
+                // Gán dữ liệu từ dataset
+                idAccount.value = btn.dataset.id || '';
+                phone.value = btn.dataset.phone || '';
+                email.value = btn.dataset.email || '';
+                sex.value = btn.dataset.sex || 'false'; // Giá trị mặc định
+                dateOfBirth.value = btn.dataset.dob || '';
+                roleName.value = btn.dataset.role || 'customer'; // Giá trị mặc định
+
+                // Mở modal
+                createModal.classList.remove('hidden');
+            });
+        });
+
+        // Delete Modal
+        const deleteModal = document.getElementById('deleteModal');
+        const cancelDelete = document.getElementById('cancelDelete');
+        const confirmDelete = document.getElementById('confirmDelete');
+        const deleteForm = document.getElementById('deleteForm');
+        const deleteId = document.getElementById('deleteId');
+
+        document.querySelectorAll('.delete-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                deleteId.value = btn.dataset.id;
+                deleteForm.action = btn.dataset.url;
+                deleteModal.classList.remove('hidden');
+            });
+        });
+
+        cancelDelete.addEventListener('click', () => {
+            resetDeleteModal();
+        });
+
+        deleteModal.addEventListener('click', (e) => {
+            if (e.target === deleteModal) {
+                resetDeleteModal();
+            }
+        });
+
+        function resetDeleteModal() {
+            deleteModal.classList.add('hidden');
+            deleteId.value = '';
+            deleteForm.action = '';
+        }
+
+        confirmDelete.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (deleteForm.action && deleteId.value) {
+                deleteForm.submit();
+            }
+        });
+    </script>
+}

@@ -1,0 +1,78 @@
+@model IEnumerable<TicketGo.Application.DTOs.OrderDto>
+
+@{
+    ViewData["Title"] = "Đơn hàng của tôi";
+    Layout = "~/Views/Shared/Master_layout.cshtml";
+    int i = 0;
+}
+
+<div class="flex items-center justify-center bg-gray-100 dark:bg-gray-900 p-4">
+    <div class="w-full h-[80vh] flex flex-col bg-white dark:bg-gray-800 rounded-2xl shadow-xl overflow-hidden">
+        <div class="flex-shrink-0 p-6 border-b border-gray-200 dark:border-gray-700">
+            <h1 class="text-2xl font-bold text-gray-800 dark:text-white">Đơn Hàng Của Tôi</h1>
+        </div>
+
+        <div class="flex-1 overflow-y-auto">
+            <table class="min-w-full table-auto border-collapse">
+                <thead class="sticky top-0 bg-gray-50 dark:bg-gray-800">
+                    <tr class="text-left">
+                        <th class="p-4 text-sm font-bold text-lime-400">#</th>
+                        <th class="p-4 text-sm font-bold text-lime-400">Ngày đặt</th>
+                        <th class="p-4 text-sm font-bold text-lime-400">Tổng tiền</th>
+                        <th class="p-4 text-sm font-bold text-lime-400">Thông tin vé</th>
+                        <th class="p-4 text-sm font-bold text-lime-400">Trạng thái</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null && Model.Any())
+                    {
+                        foreach (var item in Model.OrderByDescending(o => o.DateOrder))
+                        {
+                            <tr class="border-y dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700">
+                                <td class="p-4 text-sm text-gray-700 dark:text-white">@{ i++; } @i</td>
+                                <td class="p-4 text-sm text-gray-700 dark:text-white">
+                                    @(item.DateOrder?.ToString("dd/MM/yyyy HH:mm") ?? "—")
+                                </td>
+                                <td class="p-4 text-sm text-gray-700 dark:text-white">
+                                    @String.Format("{0:N0} ₫", item.TotalPrice ?? 0)
+                                </td>
+                                <td class="p-4 text-xs text-gray-700 dark:text-white">
+                                    <div class="space-y-1">
+                                        <p><span class="font-semibold">Chuyến:</span> @(!string.IsNullOrWhiteSpace(item.TrainName) ? item.TrainName : "—")</p>
+                                        <p><span class="font-semibold">Tuyến:</span>
+                                            @((!string.IsNullOrWhiteSpace(item.PointStart) && !string.IsNullOrWhiteSpace(item.PointEnd))
+                                                ? $"{item.PointStart} → {item.PointEnd}"
+                                                : "—")
+                                        </p>
+                                        <p><span class="font-semibold">Khởi hành:</span>
+                                            @(item.DepartureTime.HasValue ? item.DepartureTime.Value.ToString("dd/MM/yyyy HH:mm") : "—")
+                                        </p>
+                                        <p><span class="font-semibold">Ghế:</span>
+                                            @(item.ListSeats != null && item.ListSeats.Any()
+                                                ? string.Join(", ", item.ListSeats)
+                                                : "—")
+                                        </p>
+                                        <p><span class="font-semibold">Loại xe:</span>
+                                            @(!string.IsNullOrWhiteSpace(item.VehicleType) ? item.VehicleType : "—")
+                                        </p>
+                                    </div>
+                                </td>
+                                <td class="p-4 text-sm text-lime-400">Đã thanh toán</td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="5" class="p-6 text-center text-gray-500">
+                                Bạn chưa có đơn hàng nào.
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+

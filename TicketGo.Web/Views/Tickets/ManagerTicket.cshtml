@@ -1,0 +1,228 @@
+﻿@{
+    Layout = "Master_layout";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ticket Management System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        a {
+            text-decoration: none !important;
+        }
+        .ticket {
+            display: flex;
+            border: 1px solid #e2e8f0; /* Màu viền */
+            border-radius: 10px;
+            background-color: #fff7e0; /* Màu nền vàng nhạt */
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* Đổ bóng */
+            transition: box-shadow 0.3s ease; /* Hiệu ứng transition cho bóng */
+            max-width: 700px; /* Điều chỉnh chiều rộng tối đa */
+            margin: 20px auto; /* Căn giữa trang */
+            padding: 15px;
+        }
+
+            .ticket:hover {
+                box-shadow: 0 8px 16px rgba(0,0,0,0.1); /* Hiệu ứng bóng khi hover */
+            }
+
+        .left-part {
+            flex: 2; /* Phần bên trái chiếm 2/3 khoảng trống */
+            padding-right: 20px;
+        }
+
+        .right-part {
+            flex: 1; /* Phần bên phải chiếm 1/3 khoảng trống */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .ticket-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .logo {
+            width: 60px; /* Kích thước logo */
+            height: 60px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+
+        .company-info {
+            flex-grow: 1;
+            text-align: center;
+        }
+
+            .company-info h4 {
+                font-size: 1.2rem;
+                margin-bottom: 5px;
+                color: #2d3748;
+            }
+
+            .company-info p {
+                font-size: 0.9rem;
+                color: #4a5568;
+                margin: 2px;
+            }
+
+        .ticket-content {
+            padding-left: 40px;
+            padding-right: 40px;
+            margin-bottom: 10px;
+        }
+
+        .route {
+            text-align: center;
+        }
+
+            .route p {
+                font-size: 1.5rem;
+                font-weight: 600;
+                margin: 0px;
+                color: #2d3748; /* Màu chữ */
+            }
+
+        .info-block {
+            display: flex;
+            justify-content: space-between;
+            padding: 0 10px; /* Khoảng cách giữa các block */
+            margin-bottom: 5px;
+        }
+
+            .info-block p {
+                margin: 0px;
+                font-size: 0.9rem;
+                color: #4a5568; /* Màu chữ */
+            }
+
+        .info-date {
+            text-align: right;
+            padding-right: 10px;
+        }
+
+            .info-date p {
+                margin-bottom: 3px;
+                margin-top: 3px;
+                font-size: 0.9rem;
+                color: #4a5568; /* Màu chữ */
+            }
+
+        .ticket-footer {
+            margin-top: 10px;
+            font-size: 0.8rem;
+            text-align: center;
+            color: #6b7280; /* Màu chữ */
+        }
+
+            .ticket-footer p {
+                margin: 0px;
+            }
+
+        .qr-code {
+            text-align: center;
+        }
+
+            .qr-code img {
+                width: 120px; /* Kích thước QR code */
+                height: 120px;
+                border-radius: 5px; /* Bo tròn cho QR code */
+                margin-bottom: 5px;
+            }
+
+            .qr-code p {
+                font-size: 0.8rem;
+                color: #4a5568; /* Màu chữ */
+            }
+
+        .price {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #e53e3e; /* Màu chữ giá */
+            text-align: right;
+            padding-right: 10px;
+        }
+    </style>
+
+
+</head>
+<body>
+    <div class="container">
+        <h1 class="mt-5">Quản lý vé</h1>
+        <ul class="nav nav-tabs mt-4" id="ticketTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="current-tickets-tab" data-bs-toggle="tab" data-bs-target="#current-tickets" type="button" role="tab" aria-controls="current-tickets" aria-selected="true">Vé hiện tại</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="cancelled-tickets-tab" data-bs-toggle="tab" data-bs-target="#cancelled-tickets" type="button" role="tab" aria-controls="cancelled-tickets" aria-selected="false">Vé đã hủy</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="used-tickets-tab" data-bs-toggle="tab" data-bs-target="#used-tickets" type="button" role="tab" aria-controls="used-tickets" aria-selected="false">Vé đã đi</button>
+            </li>
+        </ul>
+
+        <div class="tab-content mt-4" id="ticketTabContent">
+            <div class="tab-pane fade show active" id="current-tickets" role="tabpanel" aria-labelledby="current-tickets-tab">
+
+                @*   ticket *@
+                <div class="ticket">
+                    <div class="left-part">
+                        <div class="ticket-header">
+                            <div class="company-info">
+                                <h4>Thông tin vé xe</h4>
+
+                            </div>
+                        </div>
+                        <div class="ticket-content">
+                            <div class="route">
+                                @* <p>Hanoi - Ho Chi Minh City</p> *@
+                            </div>
+                            <div class="info-date">
+                                <p><strong>Ngày đi:</strong> </p>
+                            </div>
+                            <div class="info-block">
+                                <p><strong>Mã số vé:</strong> </p>
+                                <p><strong>Mã số xe:</strong> </p>
+                            </div>
+                            <div class="info-block">
+                                <p><strong>Ghế ngồi:</strong> </p>
+                            </div>
+                            <div class="price">
+                                Giá: 
+                            </div>
+                        </div>
+                        <div class="ticket-footer">
+                            <p><em>Cam kết: Chúng tôi cam kết cung cấp dịch vụ chất lượng nhất!</em></p>
+                            <p><em>Cảm ơn quý khách đã sử dụng dịch vụ của chúng tôi.</em></p>
+                        </div>
+                    </div>
+                    <div class="right-part">
+                        <div class="qr-code">
+                            <img src="https://via.placeholder.com/120" alt="QR Code">
+                            <p>Chi tiết vé xe</p>
+                        </div>
+                    </div>
+                </div>
+
+
+
+            </div>
+            <div class="tab-pane fade" id="cancelled-tickets" role="tabpanel" aria-labelledby="cancelled-tickets-tab">
+                <!-- Cancelled tickets content -->
+            </div>
+            <div class="tab-pane fade" id="used-tickets" role="tabpanel" aria-labelledby="used-tickets-tab">
+                <!-- Used tickets content -->
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+
+

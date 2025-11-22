@@ -1,0 +1,341 @@
+﻿@model IEnumerable<TicketGo.Application.DTOs.CoachDto>
+@inject Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper<IEnumerable<TicketGo.Application.DTOs.CoachDto>> Html
+
+@{
+    ViewData["Title"] = "Danh sách xe";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+    int i = 0;
+    var trains = ViewData["Trains"] as IEnumerable<TicketGo.Application.DTOs.TrainDto> ?? new List<TicketGo.Application.DTOs.TrainDto>();
+}
+
+<div class="flex items-center justify-center bg-gray-100 dark:bg-gray-900 p-4">
+    <div class="w-full h-[80vh] flex flex-col bg-white dark:bg-gray-800 rounded-2xl shadow-xl overflow-hidden">
+        <!-- Header -->
+        <div class="flex-shrink-0 p-6 border-b border-gray-200 dark:border-gray-700">
+            <div class="flex justify-between items-center">
+                <h1 class="text-2xl font-bold text-gray-800 dark:text-white">Danh Sách Xe</h1>
+                <button id="createModalToggle" class="flex items-center px-4 py-2 bg-lime-400 text-white text-sm font-semibold rounded-lg hover:bg-lime-500 transition ml-8">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                    </svg>
+                    Thêm Xe
+                </button>
+            </div>
+        </div>
+
+        <!-- Scrollable Table -->
+        <div class="flex-1 overflow-y-auto">
+            <table class="min-w-full table-auto border-collapse">
+                <thead class="sticky top-0 bg-gray-50 dark:bg-gray-800">
+                    <tr class="text-left">
+                        <th class="p-4 text-sm font-bold text-lime-400 cursor-pointer"><div class="flex items-center hover:font-extrabold">#</div></th>
+                        <th class="p-4 text-sm font-bold text-lime-400 cursor-pointer"><div class="flex items-center hover:font-extrabold">Tên Xe</div></th>
+                        <th class="p-4 text-sm font-bold text-lime-400 cursor-pointer"><div class="flex items-center hover:font-extrabold">Loại</div></th>
+                        <th class="p-4 text-sm font-bold text-lime-400 cursor-pointer"><div class="flex items-center hover:font-extrabold">Số Lượng Ghế</div></th>
+                        <th class="p-4 text-sm font-bold text-lime-400 cursor-pointer"><div class="flex items-center hover:font-extrabold">Giá Cơ Bản</div></th>
+                        <th class="p-4 text-sm font-bold text-lime-400 cursor-pointer"><div class="flex items-center hover:font-extrabold">Chuyến Xe</div></th>
+                        <th class="p-4 text-sm font-bold text-lime-400"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr class="border-y dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700">
+                            <td class="p-4 text-sm text-gray-700 dark:text-white">@{ i++; } @i</td>
+                            <td class="p-4 text-sm text-gray-700 dark:text-white">@Html.DisplayFor(modelItem => item.NameCoach)</td>
+                            <td class="p-4 text-sm text-gray-700 dark:text-white">@Html.DisplayFor(modelItem => item.Category)</td>
+                            <td class="p-4 text-sm text-gray-700 dark:text-white">@Html.DisplayFor(modelItem => item.SeatsQuantity)</td>
+                            <td class="p-4 text-sm text-gray-700 dark:text-white">@Html.DisplayFor(modelItem => item.BasicPrice)</td>
+                            <td class="p-4 text-sm text-gray-700 dark:text-white">@Html.DisplayFor(modelItem => item.TrainName)</td>
+                            <td class="p-4 flex space-x-2">
+                                <button class="edit-btn flex items-center justify-center text-gray-600 dark:text-gray-300 hover:text-lime-400 dark:hover:text-lime-400 w-8 h-8 rounded-full hover:bg-navy-600" 
+                                        data-id="@item.IdCoach" 
+                                        data-name="@item.NameCoach" 
+                                        data-category="@item.Category" 
+                                        data-seats="@item.SeatsQuantity" 
+                                        data-price="@item.BasicPrice" 
+                                        data-train="@item.IdTrain" 
+                                        title="Sửa">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                                    </svg>
+                                </button>
+                                <button class="delete-btn flex items-center justify-center text-gray-600 dark:text-gray-300 hover:text-lime-400 dark:hover:text-lime-400 w-8 h-8 rounded-full hover:bg-navy-600" 
+                                        data-id="@item.IdCoach" 
+                                        data-url="@Url.Action("Delete", "Coaches", new { area = "Admin", id = item.IdCoach })" 
+                                        title="Xóa">
+                                    <svg class="w-5 h-5 text-lime-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5-4h4M10 10v6m4-6v6M5 7h14"></path>
+                                    </svg>
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Create/Edit Modal -->
+    <div id="createModal" class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 hidden">
+        <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-6 w-full max-w-md max-h-[80vh] overflow-y-auto shadow-lg">
+            <h2 id="modalTitle" class="text-xl font-bold text-gray-800 dark:text-white mb-4">Thêm Xe Mới</h2>
+            <form id="coachForm" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" id="idCoach" name="IdCoach" />
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2" for="nameCoach">Tên Xe <span class="text-lime-400">*</span></label>
+                    <div class="relative">
+                        <input type="text" id="nameCoach" name="NameCoach" class="w-full pt-3 pb-3 pr-3 pl-10 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-lime-400" 
+                               required minlength="2" pattern="[A-Za-z0-9\s]+" title="Tên xe chỉ chứa chữ cái, số và khoảng trắng" placeholder="Nhập tên xe" />
+                        <svg class="absolute left-3 top-1/3 -translate-y-1/2 w-5 h-5 text-lime-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m-14 1v10h10V8H6z"/>
+                        </svg>
+                    </div>
+                    <p id="nameCoachError" class="text-sm text-lime-400 mt-1 hidden"></p>
+                    @if (ViewData.ModelState.ContainsKey("NameCoach"))
+                    {
+                        <p class="text-sm text-lime-400 mt-1">@ViewData.ModelState["NameCoach"]?.Errors.FirstOrDefault()?.ErrorMessage</p>
+                    }
+                </div>
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2" for="category">Loại Xe <span class="text-lime-400">*</span></label>
+                    <div class="relative">
+                        <input type="text" id="category" name="Category" class="w-full pt-3 pb-3 pr-3 pl-10 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-lime-400" 
+                               required minlength="2" pattern="[A-Za-z\s]+" title="Loại xe chỉ chứa chữ cái và khoảng trắng" placeholder="Nhập loại xe" />
+                        <svg class="absolute left-3 top-1/3 -translate-y-1/2 w-5 h-5 text-lime-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5h6m-6 4h6m-6 4h6m-8 4h10"/>
+                        </svg>
+                    </div>
+                    <p id="categoryError" class="text-sm text-lime-400 mt-1 hidden"></p>
+                    @if (ViewData.ModelState.ContainsKey("Category"))
+                    {
+                        <p class="text-sm text-lime-400 mt-1">@ViewData.ModelState["Category"]?.Errors.FirstOrDefault()?.ErrorMessage</p>
+                    }
+                </div>
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2" for="seatsQuantity">Số Lượng Ghế <span class="text-lime-400">*</span></label>
+                    <div class="relative">
+                        <input type="number" id="seatsQuantity" name="SeatsQuantity" class="w-full pt-3 pb-3 pr-3 pl-10 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-lime-400" 
+                               required min="1" step="1" placeholder="Nhập số lượng ghế" />
+                        <svg class="absolute left-3 top-1/3 -translate-y-1/2 w-5 h-5 text-lime-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 18H6v-2h12v2zm0-5H6v-2h12v2zm0-5H6V6h12v2z"/>
+                        </svg>
+                    </div>
+                    <p id="seatsQuantityError" class="text-sm text-lime-400 mt-1 hidden"></p>
+                    @if (ViewData.ModelState.ContainsKey("SeatsQuantity"))
+                    {
+                        <p class="text-sm text-lime-400 mt-1">@ViewData.ModelState["SeatsQuantity"]?.Errors.FirstOrDefault()?.ErrorMessage</p>
+                    }
+                </div>
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2" for="basicPrice">Giá Cơ Bản <span class="text-lime-400">*</span></label>
+                    <div class="relative">
+                        <input type="number" id="basicPrice" name="BasicPrice" class="w-full pt-3 pb-3 pr-3 pl-10 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-lime-400" 
+                               required min="0" step="0.01" placeholder="Nhập giá cơ bản" />
+                        <svg class="absolute left-3 top-1/3 -translate-y-1/2 w-5 h-5 text-lime-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M3 12h18"/>
+                        </svg>
+                    </div>
+                    <p id="basicPriceError" class="text-sm text-lime-400 mt-1 hidden"></p>
+                    @if (ViewData.ModelState.ContainsKey("BasicPrice"))
+                    {
+                        <p class="text-sm text-lime-400 mt-1">@ViewData.ModelState["BasicPrice"]?.Errors.FirstOrDefault()?.ErrorMessage</p>
+                    }
+                </div>
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2" for="idTrain">Chuyến Xe <span class="text-lime-400">*</span></label>
+                    <div class="relative">
+                        <select id="idTrain" name="IdTrain" class="w-full pt-3 pb-3 pr-3 pl-10 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-lime-400" >
+                            <option value="">Chọn chuyến xe</option>
+                            @foreach (var train in trains)
+                            {
+                                <option value="@train.IdTrain">@train.NameTrain</option>
+                            }
+                        </select>
+                        <svg class="absolute left-3 top-1/3 -translate-y-1/2 w-5 h-5 text-lime-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5h6m-6 4h6m-6 4h6m-8 4h10"/>
+                        </svg>
+                    </div>
+                    <p id="idTrainError" class="text-sm text-lime-400 mt-1 hidden"></p>
+                    @if (ViewData.ModelState.ContainsKey("IdTrain"))
+                    {
+                        <p class="text-sm text-lime-400 mt-1">@ViewData.ModelState["IdTrain"]?.Errors.FirstOrDefault()?.ErrorMessage</p>
+                    }
+                </div>
+                <div class="flex justify-end space-x-2">
+                    <button type="button" id="closeModal" class="px-4 py-2 text-white rounded-lg hover:bg-gray-600 transition">Hủy</button>
+                    <button type="submit" id="submitButton" class="px-12 py-2 bg-lime-400 text-white rounded-lg hover:bg-lime-500 transition">Tạo</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div id="deleteModal" class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 hidden">
+        <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-6 w-full max-w-sm shadow-lg">
+            <h2 class="text-lg font-bold text-gray-800 dark:text-white mb-4">Xác Nhận Xóa</h2>
+            <p class="text-sm text-gray-600 dark:text-gray-300 mb-6">Bạn có chắc muốn xóa xe này    ?</p>
+            <form asp-action="Delete" asp-controller="Coaches" asp-area="Admin" id="deleteForm" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="id" id="deleteId" />
+                <div class="flex justify-end space-x-2">
+                    <button type="button" id="cancelDelete" class="px-4 py-2 text-white rounded-lg hover:bg-gray-600 transition">Hủy</button>
+                    <button type="submit" id="confirmDelete" class="px-4 py-2 bg-lime-400 text-white rounded-lg hover:bg-lime-500 transition">Xóa</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Toastr configuration
+        toastr.options = {
+            positionClass: 'toast-bottom-right',
+            progressBar: true,
+            timeOut: 5000
+        };
+
+        // Display success or error message from TempData
+        const successMessage = '@TempData["SuccessMessage"]';
+        const errorMessage = '@TempData["ErrorMessage"]';
+        if (successMessage) {
+            toastr.success(successMessage);
+        }
+        if (errorMessage) {
+            toastr.error(errorMessage);
+        }
+
+        // Create/Edit Modal
+        const createModal = document.getElementById('createModal');
+        const createModalToggle = document.getElementById('createModalToggle');
+        const closeModal = document.getElementById('closeModal');
+        const coachForm = document.getElementById('coachForm');
+        const modalTitle = document.getElementById('modalTitle');
+        const submitButton = document.getElementById('submitButton');
+        const idCoach = document.getElementById('idCoach');
+        const nameCoach = document.getElementById('nameCoach');
+        const category = document.getElementById('category');
+        const seatsQuantity = document.getElementById('seatsQuantity');
+        const basicPrice = document.getElementById('basicPrice');
+        const idTrain = document.getElementById('idTrain');
+
+        createModalToggle.addEventListener('click', () => {
+            resetModal('create');
+            createModal.classList.toggle('hidden');
+        });
+
+        closeModal.addEventListener('click', resetModal);
+        createModal.addEventListener('click', (e) => {
+            if (e.target === createModal) resetModal();
+        });
+
+        function resetModal(mode = 'create') {
+            createModal.classList.add('hidden');
+            coachForm.reset();
+            document.getElementById('nameCoachError').classList.add('hidden');
+            document.getElementById('categoryError').classList.add('hidden');
+            document.getElementById('seatsQuantityError').classList.add('hidden');
+            document.getElementById('basicPriceError').classList.add('hidden');
+            document.getElementById('idTrainError').classList.add('hidden');
+            idCoach.value = '';
+            idTrain.value = '';
+            if (mode === 'create') {
+                modalTitle.textContent = 'Thêm Xe Mới';
+                submitButton.textContent = 'Tạo';
+                coachForm.action = '@Url.Action("Create", "Coaches", new { area = "Admin" })';
+            }
+        }
+
+        // Form validation
+        coachForm.addEventListener('submit', (e) => {
+            const nameCoachError = document.getElementById('nameCoachError');
+            const categoryError = document.getElementById('categoryError');
+            const seatsQuantityError = document.getElementById('seatsQuantityError');
+            const basicPriceError = document.getElementById('basicPriceError');
+            const idTrainError = document.getElementById('idTrainError');
+            let isValid = true;
+
+            nameCoachError.classList.add('hidden');
+            categoryError.classList.add('hidden');
+            seatsQuantityError.classList.add('hidden');
+            basicPriceError.classList.add('hidden');
+            idTrainError.classList.add('hidden');
+
+            if (!nameCoach.value.match(/^[A-Za-z0-9\s]+$/)) {
+                nameCoachError.textContent = 'Tên xe chỉ chứa chữ cái, số và khoảng trắng';
+                nameCoachError.classList.remove('hidden');
+                isValid = false;
+            }
+            if (!category.value.match(/^[A-Za-z\s]+$/)) {
+                categoryError.textContent = 'Loại xe chỉ chứa chữ cái và khoảng trắng';
+                categoryError.classList.remove('hidden');
+                isValid = false;
+            }
+            if (seatsQuantity.value < 1) {
+                seatsQuantityError.textContent = 'Số lượng ghế phải lớn hơn 0';
+                seatsQuantityError.classList.remove('hidden');
+                isValid = false;
+            }
+            if (basicPrice.value < 0) {
+                basicPriceError.textContent = 'Giá cơ bản không được âm';
+                basicPriceError.classList.remove('hidden');
+                isValid = false;
+            }
+            
+
+            if (!isValid) e.preventDefault();
+        });
+
+        // Edit functionality
+        document.querySelectorAll('.edit-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                idCoach.value = btn.dataset.id;
+                nameCoach.value = btn.dataset.name;
+                category.value = btn.dataset.category;
+                seatsQuantity.value = btn.dataset.seats;
+                basicPrice.value = btn.dataset.price;
+                idTrain.value = btn.dataset.train;
+                modalTitle.textContent = 'Chỉnh Sửa Xe';
+                submitButton.textContent = 'Sửa';
+                coachForm.action = '@Url.Action("Edit", "Coaches", new { area = "Admin" })';
+                createModal.classList.toggle('hidden');
+            });
+        });
+
+        // Delete Modal
+        const deleteModal = document.getElementById('deleteModal');
+        const cancelDelete = document.getElementById('cancelDelete');
+        const confirmDelete = document.getElementById('confirmDelete');
+        const deleteForm = document.getElementById('deleteForm');
+        const deleteId = document.getElementById('deleteId');
+
+        document.querySelectorAll('.delete-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                deleteId.value = btn.dataset.id;
+                deleteForm.action = btn.dataset.url;
+                deleteModal.classList.toggle('hidden');
+            });
+        });
+
+        cancelDelete.addEventListener('click', resetDeleteModal);
+        deleteModal.addEventListener('click', (e) => {
+            if (e.target === deleteModal) resetDeleteModal();
+        });
+
+        function resetDeleteModal() {
+            deleteModal.classList.add('hidden');
+            deleteId.value = '';
+            deleteForm.action = '';
+        }
+
+        confirmDelete.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (deleteForm.action && deleteId.value) {
+                deleteForm.submit();
+            }
+        });
+    </script>
+}

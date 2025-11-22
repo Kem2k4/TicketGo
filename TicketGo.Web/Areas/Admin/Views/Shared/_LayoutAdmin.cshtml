@@ -1,0 +1,222 @@
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@{
+    string nykyAction = ViewContext.RouteData.Values["action"]?.ToString();
+    string nykyController = ViewContext.RouteData.Values["controller"]?.ToString();
+}
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản Trị - TicketGo</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="~/css/output.css" />
+</head>
+<body class="bg-gray-100 font-sans antialiased flex h-screen overflow-hidden">
+    <!-- Sidebar -->
+    <div class="fixed z-50 w-64 bg-navy-700 text-white h-screen flex-shrink-0 transform transition-transform duration-300 ease-in-out md:translate-x-0 -translate-x-full md:static" id="sidebar">
+        <div class="h-full flex flex-col">
+            <div class="flex items-center justify-center h-20">
+                <a class="flex-shrink-0 flex items-center space-x-2">
+                    <span class="text-3xl font-extrabold text-lime-400 bg-clip-text text-transparent bg-gradient-to-r from-lime-400 to-white tracking-tight transform hover:scale-105 transition-all duration-300">
+                        TicketGo
+                    </span>
+                    <svg class="h-6 w-6 text-lime-400 hidden sm:block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z" />
+                    </svg>
+                </a>            
+            </div>
+            <nav class="flex-1 py-8 space-y-6">
+                <!-- Analytics -->
+                <div class="text-black font-semibold pl-6">Analytics</div>
+                <a href="@Url.Action("Dashboard", "Dashboard", new { area = "Admin" })" class="flex items-center py-2 px-6 rounded-lg hover:bg-navy-600 hover:text-lime-400 transition-all duration-300 relative @(nykyAction == "Dashboard" && nykyController == "Dashboard" ? "bg-navy-600 text-lime-400" : "text-black")">
+                    <svg class="h-6 w-6 mr-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+                    </svg>
+                    Dashboard
+                    @if (nykyAction == "Dashboard" && nykyController == "Dashboard") {
+                        <div class="absolute left-0 w-1 bg-lime-400 h-10 rounded-r-full"></div>
+                    }
+                </a>
+
+                <!-- Management -->
+                <div class="text-black font-semibold pl-6">Management</div>
+                <a href="@Url.Action("Index", "Orders", new { area = "Admin" })" class="flex items-center py-2 px-6 rounded-lg hover:bg-navy-600 hover:text-lime-400 transition-all duration-300 relative @(nykyAction == "Index" && nykyController == "Orders" ? "bg-navy-600 text-lime-400" : "text-black")">
+                    <svg class="h-6 w-6 mr-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                    </svg>
+                    Quản lý hóa đơn
+                    @if (nykyAction == "Index" && nykyController == "Orders") {
+                        <div class="absolute left-0 w-1 bg-lime-400 h-10 rounded-r-full"></div>
+                    }
+                </a>
+                <a href="@Url.Action("Index", "Trains", new { area = "Admin" })" class="flex items-center py-2 px-6 rounded-lg hover:bg-navy-600 hover:text-lime-400 transition-all duration-300 relative @(nykyAction == "Index" && nykyController == "Trains" ? "bg-navy-600 text-lime-400" : "text-black")">
+                    <svg class="h-6 w-6 mr-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                    </svg>
+                    Quản lý chuyến xe
+                    @if (nykyAction == "Index" && nykyController == "Trains") {
+                        <div class="absolute left-0 w-1 bg-lime-400 h-10 rounded-r-full"></div>
+                    }
+                </a>
+                <a href="@Url.Action("Index", "TrainRoutes", new { area = "Admin" })" class="flex items-center py-2 px-6 rounded-lg hover:bg-navy-600 hover:text-lime-400 transition-all duration-300 relative @(nykyAction == "Index" && nykyController == "TrainRoutes" ? "bg-navy-600 text-lime-400" : "text-black")">
+                    <svg class="h-6 w-6 mr-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553-2.276A1 1 0 0021 13.382V2.618a1 1 0 00-1.447-.894L15 4m0 13V4m0 0L9 7"></path>
+                    </svg>
+                    Quản lý tuyến đường
+                    @if (nykyAction == "Index" && nykyController == "TrainRoutes") {
+                        <div class="absolute left-0 w-1 bg-lime-400 h-10 rounded-r-full"></div>
+                    }
+                </a>
+                <a href="@Url.Action("Index", "Coaches", new { area = "Admin" })" class="flex items-center py-2 px-6 rounded-lg hover:bg-navy-600 hover:text-lime-400 transition-all duration-300 relative @(nykyAction == "Index" && nykyController == "Coaches" ? "bg-navy-600 text-lime-400" : "text-black")">
+                    <svg class="h-6 w-6 mr-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z"></path>
+                    </svg>
+                    Quản lý xe
+                    @if (nykyAction == "Index" && nykyController == "Coaches") {
+                        <div class="absolute left-0 w-1 bg-lime-400 h-10 rounded-r-full"></div>
+                    }
+                </a>
+                <a href="@Url.Action("Index", "Accounts", new { area = "Admin" })" class="flex items-center py-2 px-6 rounded-lg hover:bg-navy-600 hover:text-lime-400 transition-all duration-300 relative @(nykyAction == "Index" && nykyController == "Accounts" ? "bg-navy-600 text-lime-400" : "text-black")">
+                    <svg class="h-6 w-6 mr-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                    </svg>
+                    Quản lý tài khoản
+                    @if (nykyAction == "Index" && nykyController == "Accounts") {
+                        <div class="absolute left-0 w-1 bg-lime-400 h-10 rounded-r-full"></div>
+                    }
+                </a>
+            </nav>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="flex-1 flex flex-col">
+        <!-- Navbar -->
+        <nav class="bg-navy-700 z-40">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center justify-between h-16">
+                    <div class="flex items-center space-x-2">
+                        <button id="sidebarToggle" class="text-black hover:text-lime-400 focus:outline-none p-2 rounded-full hover:bg-navy-600 transition-colors duration-300 md:hidden">
+                            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
+                            </svg>
+                        </button>
+                    </div>
+
+                    <!-- Desktop Menu -->
+                    <div class="hidden md:flex items-center space-x-8">
+                        <div class="relative">
+                            <input type="text" placeholder="Tìm kiếm..."
+                                   class="pl-10 pr-4 py-2 rounded-lg bg-navy-600 text-black border border-navy-500 focus:ring-2 focus:ring-lime-400 focus:border-transparent transition-all duration-300">
+                            <svg class="h-5 w-5 text-black absolute left-3 top-1/2 transform -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                            </svg>
+                        </div>
+
+                        <div class="flex items-center space-x-4">
+                            <!-- Avatar + tên -->
+                            <div class="flex items-center space-x-2 text-black">
+                                <img src="~/assets/user.png" alt="Avatar" class="w-10 h-10 rounded-full border border-gray-300" />
+                                <span class="font-medium">Quản Trị Viên</span>
+                            </div>
+
+                            <!-- Nút đăng xuất -->
+                            <form asp-area="Admin" asp-controller="Accounts" asp-action="Logout" method="post" class="inline">
+                                @Html.AntiForgeryToken()
+                                <button type="submit"
+                                        class="flex items-center space-x-1 px-3 py-2 bg-red-500 hover:bg-red-600 text-white text-sm font-medium rounded-lg transition-all">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
+                                         stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                              d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                                    </svg>
+                                    <span>Đăng xuất</span>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Mobile -->
+                    <div class="md:hidden flex items-center">
+                        <button id="menuToggle" class="text-black hover:text-lime-400 focus:outline-none p-2 rounded-full hover:bg-navy-600 transition-colors duration-300">
+                            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mobile Menu -->
+            <div class="md:hidden hidden bg-navy-800 bg-opacity-95" id="mobileMenu">
+                <div class="px-4 pt-4 pb-6 space-y-3">
+                    <div class="relative">
+                        <input type="text" placeholder="Tìm kiếm..." class="w-full pl-10 pr-4 py-2 rounded-lg bg-navy-600 text-black border border-navy-500 focus:ring-2 focus:ring-lime-400 focus:border-transparent transition-all duration-300">
+                        <svg class="h-5 w-5 text-black absolute left-3 top-1/2 transform -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                        </svg>
+                    </div>
+
+                    <a href="#" class="block text-black hover:text-lime-400 font-medium px-4 py-2 rounded-lg hover:bg-navy-700 transition-all duration-300 flex items-center">
+                        <img src="~/assets/user.png" alt="Avatar" class="w-8 h-8 rounded-full mr-2" />
+                        <span>Quản Trị Viên</span>
+                    </a>
+
+                    <form asp-area="Admin" asp-controller="Accounts" asp-action="Logout" method="post">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="block w-full text-left text-black hover:text-lime-400 font-medium px-4 py-2 rounded-lg hover:bg-navy-700 transition-all duration-300">
+                            Đăng xuất
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Content -->
+        <main class="flex-1 max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 py-12 overflow-y-auto">
+            @RenderBody()
+        </main>
+    </div>
+
+    <script>
+        (function() {
+            const sidebar = document.getElementById('sidebar');
+            const sidebarToggle = document.getElementById('sidebarToggle');
+            const menuToggle = document.getElementById('menuToggle');
+            const mobileMenu = document.getElementById('mobileMenu');
+
+            if (sidebarToggle) {
+                sidebarToggle.addEventListener('click', () => {
+                    if (sidebar) {
+                        sidebar.classList.toggle('-translate-x-full');
+                    }
+                });
+            }
+
+            if (menuToggle && mobileMenu) {
+                menuToggle.addEventListener('click', () => {
+                    mobileMenu.classList.toggle('hidden');
+                });
+            }
+
+            // Close sidebar when clicking outside on mobile
+            if (sidebar && sidebarToggle) {
+                document.addEventListener('click', (e) => {
+                    if (!sidebar.contains(e.target) && !sidebarToggle.contains(e.target) && !sidebar.classList.contains('-translate-x-full')) {
+                        sidebar.classList.add('-translate-x-full');
+                    }
+                });
+            }
+        })();
+    </script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

@@ -1,0 +1,254 @@
+﻿@model PagedResult<TrainResponseDto>
+@using TicketGo.Application.DTOs
+
+@{
+    ViewData["Title"] = "Tìm Chuyến Xe Khách";
+    var query = Context.Request.Query;
+}
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"]</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-50 font-sans antialiased">
+    <div class="min-h-screen flex flex-col">
+        <!-- Sticky Header with Search Form -->
+        <header class="sticky top-0 z-20 bg-white shadow-md">
+            <div class="max-w-7xl mx-auto px-4 py-4">
+                <h1 class="text-2xl font-bold text-gray-800 mb-3">Tìm Chuyến Xe Khách</h1>
+                <form method="get" asp-controller="Train" asp-action="ListTrain"
+                    class="bg-white rounded-2xl shadow-lg border border-gray-100 p-4 sm:p-6">
+                    <div class="flex flex-wrap gap-4 items-center">
+                        <!-- Nơi đi -->
+                        <div class="relative flex-1 min-w-[200px]">
+                            <input
+                                name="NoiDi"
+                                value="@query["NoiDi"]"
+                                placeholder="Nơi đi"
+                                class="w-full py-3 pl-12 pr-4 rounded-xl border border-gray-300 bg-gray-50
+                                    text-gray-700 focus:ring-2 focus:ring-lime-400 focus:outline-none transition"
+                            />
+                            <svg class="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400"
+                                fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                            </svg>
+                        </div>
+
+                        <!-- Nơi đến -->
+                        <div class="relative flex-1 min-w-[200px]">
+                            <input
+                                name="NoiDen"
+                                value="@query["NoiDen"]"
+                                placeholder="Nơi đến"
+                                class="w-full py-3 pl-12 pr-4 rounded-xl border border-gray-300 bg-gray-50
+                                    text-gray-700 focus:ring-2 focus:ring-lime-400 focus:outline-none transition"
+                            />
+                            <svg class="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400"
+                                fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z"/>
+                            </svg>
+                        </div>
+
+                        <!-- Ngày khởi hành -->
+                        <div class="relative flex-1 min-w-[180px]">
+                            <input
+                                type="date"
+                                name="NgayKhoiHanh"
+                                value="@query["NgayKhoiHanh"]"
+                                class="w-full py-3 pl-12 pr-4 rounded-xl border border-gray-300 bg-gray-50
+                                    text-gray-700 focus:ring-2 focus:ring-lime-400 focus:outline-none transition"
+                            />
+                            <svg class="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400"
+                                fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                            </svg>
+                        </div>
+
+                        <!-- Nút tìm kiếm -->
+                        <div class="flex-shrink-0">
+                            <button type="submit"
+                                    class="inline-flex items-center gap-2 bg-lime-400 text-white font-semibold
+                                        py-3 px-6 rounded-xl shadow hover:bg-lime-500 transition duration-300">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                                </svg>
+                                Tìm kiếm
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </header>
+
+        <!-- Main Content (Filter + Bus List) -->
+        <main class="container mx-auto p-4 flex flex-col lg:flex-row gap-6">
+            <!-- Filter Sidebar (Collapsible on Mobile) -->
+            <aside class="lg:w-1/4 bg-white rounded-2xl p-6 shadow-lg lg:sticky lg:top-24">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-xl font-bold text-gray-800">Bộ lọc tìm kiếm</h2>
+                    <button class="lg:hidden text-lime-500 focus:outline-none" onclick="toggleFilter()">
+                        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 6h16M4 12h16M4 18h16"/>
+                        </svg>
+                    </button>
+                </div>
+
+                <div id="filter-content" class="filter-toggle hidden lg:block space-y-6">
+                    <form method="get" asp-controller="Train" asp-action="ListTrain" class="space-y-6">
+                        <input type="hidden" name="NoiDi" value="@query["NoiDi"]" />
+                        <input type="hidden" name="NoiDen" value="@query["NoiDen"]" />
+                        <input type="hidden" name="NgayKhoiHanh" value="@query["NgayKhoiHanh"]" />
+
+                        <!-- Sắp xếp theo thời gian -->
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Sắp xếp theo thời gian</label>
+                            <select name="SortTime" onchange="this.form.submit()"
+                                    class="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-300 text-gray-700
+                                        focus:outline-none focus:ring-2 focus:ring-lime-400 transition">
+                                <option value="">Không sắp xếp</option>
+                                <option value="time:asc" selected="@(query["SortTime"] == "time:asc")">Giờ sớm nhất</option>
+                                <option value="time:desc" selected="@(query["SortTime"] == "time:desc")">Giờ muộn nhất</option>
+                            </select>
+                        </div>
+
+                        <!-- Sắp xếp theo giá -->
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Sắp xếp theo giá</label>
+                            <select name="SortPrice" onchange="this.form.submit()"
+                                    class="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-300 text-gray-700
+                                        focus:outline-none focus:ring-2 focus:ring-lime-400 transition">
+                                <option value="">Không sắp xếp</option>
+                                <option value="fare:asc" selected="@(query["SortPrice"] == "fare:asc")">Giá tăng dần</option>
+                                <option value="fare:desc" selected="@(query["SortPrice"] == "fare:desc")">Giá giảm dần</option>
+                            </select>
+                        </div>
+
+                        <!-- Loại xe -->
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Loại xe</label>
+                            <div class="grid gap-3">
+                                @{
+                                    var loaiXeValues = query["LoaiXe"];
+                                    var selectedLoaiXe = new List<string>();
+                                    if (loaiXeValues.Count > 0)
+                                    {
+                                        foreach (var val in loaiXeValues)
+                                        {
+                                            if (!string.IsNullOrEmpty(val))
+                                                selectedLoaiXe.Add(val);
+                                        }
+                                    }
+                                }
+                                <label class="flex items-center gap-2">
+                                    <input type="checkbox" name="LoaiXe" value="Ghe" 
+                                           class="accent-lime-500 h-4 w-4 loai-xe-checkbox"
+                                           @(selectedLoaiXe.Contains("Ghe") ? "checked" : "")>
+                                    <span class="text-gray-700">Ghế ngồi</span>
+                                </label>
+                                <label class="flex items-center gap-2">
+                                    <input type="checkbox" name="LoaiXe" value="Giuong" 
+                                           class="accent-lime-500 h-4 w-4 loai-xe-checkbox"
+                                           @(selectedLoaiXe.Contains("Giuong") ? "checked" : "")>
+                                    <span class="text-gray-700">Giường nằm</span>
+                                </label>
+                                <label class="flex items-center gap-2">
+                                    <input type="checkbox" name="LoaiXe" value="Limousine" 
+                                           class="accent-lime-500 h-4 w-4 loai-xe-checkbox"
+                                           @(selectedLoaiXe.Contains("Limousine") ? "checked" : "")>
+                                    <span class="text-gray-700">Limousine</span>
+                                </label>
+                            </div>
+                            <button type="submit" class="mt-3 w-full px-4 py-2 bg-lime-400 text-white rounded-lg hover:bg-lime-500 transition text-sm font-semibold">
+                                Áp dụng bộ lọc
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </aside>
+
+            <!-- Bus List -->
+            <section class="lg:w-3/4">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+                    @if (!Model?.Items?.Any() ?? true)
+                    {
+                        <div class="col-span-full text-center py-6 bg-white rounded-lg shadow-md">
+                            <p class="text-gray-600">Không tìm thấy chuyến xe phù hợp.</p>
+                            <p class="text-gray-500 mt-2">Hãy thử thay đổi điểm đi, điểm đến hoặc ngày khởi hành.</p>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                            @foreach (var bus in Model.Items)
+                            {
+                                <a  asp-controller="Order" asp-action="Index" asp-route-idCoach="@bus.CoachID" class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:scale-105">
+                                    <img src="~/assets/buses/limousine.png" class="w-full h-32 object-cover">
+                                    <div class="p-4">
+                                        <h3 class="text-base font-semibold text-navy-700">
+                                            @(bus.NoiDi ?? "Unknown") - @(bus.NoiDen ?? "Unknown")
+                                        </h3>
+                                        <p class="text-gray-500 text-sm mt-1">
+                                            @(bus.GioKhoiHanh != default(DateTime) ? bus.GioKhoiHanh.ToString("HH:mm dd/MM/yyyy") : "N/A")
+                                        </p>
+                                        <p class="text-gray-400 text-sm">Thời gian di chuyển: ~ giờ</p>
+                                        <p class="text-gray-400 text-sm">Loại xe: @(bus.LoaiXe ?? "N/A")</p>
+                                        <div class="flex items-center justify-between mt-2">
+                                            <span class="text-lime-400 font-medium">
+                                                @(bus.GiaVe.HasValue ? bus.GiaVe.Value.ToString("N0") + "₫" : "N/A")
+                                            </span>
+                                        </div>
+                                        <button class="mt-3 w-full bg-lime-400 text-white py-2 px-6 rounded-lg hover:bg-lime-500 transition duration-300 shadow-sm">
+                                            Chọn chuyến
+                                        </button>
+                                    </div>
+                                </a>
+                            }
+                        </div>
+
+                        <!-- Pagination -->
+                        <div class="flex justify-center mt-10">
+                            <div class="inline-flex space-x-2">
+                                @for (int i = 1; i <= Math.Ceiling((double)(Model?.TotalRecords ?? 1) / (Model?.PageSize ?? 3)); i++)
+                                {
+                                    var queryString = Microsoft.AspNetCore.WebUtilities.QueryHelpers.AddQueryString(
+                                        Context.Request.Path,
+                                        query.ToDictionary(x => x.Key, x => x.Value.ToString().Equals("") ? null : x.Value.ToString())
+                                            .Where(x => x.Key != "Page")
+                                            .Append(new KeyValuePair<string, string?>("Page", i.ToString()))
+                                    );
+
+                                    <a
+                                        href="@queryString"
+                                        class="@(i == (Model?.Page ?? 1) ? "bg-lime-400 text-white" : "bg-gray-200 text-gray-700 hover:bg-lime-400 hover:text-white") px-4 py-2 rounded-full transition duration-300 shadow-sm"
+                                    >
+                                        @i
+                                    </a>
+                                }
+                            </div>
+                        </div>
+                    }
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- JavaScript for Filter Toggle -->
+    <script>
+        function toggleFilter() {
+            const filterContent = document.getElementById('filter-content');
+            filterContent.classList.toggle('hidden');
+        }
+    </script>
+</body>
+</html>

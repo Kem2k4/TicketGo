@@ -1,0 +1,335 @@
+﻿@model IEnumerable<TicketGo.Application.DTOs.TrainDto>
+
+@{
+    ViewData["Title"] = "Danh sách chuyến xe";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+    int i = 0;
+}
+
+<div class="flex items-center justify-center bg-gray-100 dark:bg-gray-900 p-4">
+    <div class="w-full h-[80vh] flex flex-col bg-white dark:bg-gray-800 rounded-2xl shadow-xl overflow-hidden">
+        <!-- Header -->
+        <div class="flex-shrink-0 p-6 border-b border-gray-200 dark:border-gray-700">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <h1 class="text-2xl font-bold text-gray-800 dark:text-white">Danh Sách Chuyến Xe</h1>
+                <div class="flex gap-2 w-full md:w-auto">
+                    <!-- Search Filter -->
+                    <form method="get" asp-action="Index" class="flex-1 md:flex-initial">
+                        <div class="flex gap-2">
+                            <input type="text" name="searchTerm" value="@ViewBag.SearchTerm" 
+                                   placeholder="Tìm kiếm tên chuyến xe..." 
+                                   class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-lime-400 focus:outline-none flex-1 md:w-64" />
+                            <button type="submit" class="px-4 py-2 bg-lime-400 text-white rounded-lg hover:bg-lime-500 transition">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                                </svg>
+                            </button>
+                            @if (!string.IsNullOrEmpty(ViewBag.SearchTerm?.ToString()))
+                            {
+                                <a href="@Url.Action("Index")" class="px-4 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 transition">
+                                    Xóa
+                                </a>
+                            }
+                        </div>
+                    </form>
+                    <button id="createModalToggle" class="flex items-center px-4 py-2 bg-lime-400 text-white text-sm font-semibold rounded-lg hover:bg-lime-500 transition">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                        </svg>
+                        Thêm Chuyến Xe
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Scrollable Table -->
+        <div class="flex-1 overflow-y-auto">
+            <table class="min-w-full table-auto border-collapse">
+                <thead class="sticky top-0 bg-gray-50 dark:bg-gray-800">
+                    <tr class="text-left">
+                        <th class="p-4 text-sm font-bold text-lime-400 cursor-pointer"><div class="flex items-center hover:font-extrabold">#</div></th>
+                        <th class="p-4 text-sm font-bold text-lime-400 cursor-pointer"><div class="flex items-center hover:font-extrabold">Tên Chuyến Xe</div></th>
+                        <th class="p-4 text-sm font-bold text-lime-400 cursor-pointer"><div class="flex items-center hover:font-extrabold">Ngày Khởi Hành</div></th>
+                        <th class="p-4 text-sm font-bold text-lime-400 cursor-pointer"><div class="flex items-center hover:font-extrabold">Hệ Số</div></th>
+                        <th class="p-4 text-sm font-bold text-lime-400 cursor-pointer"><div class="flex items-center hover:font-extrabold">Tuyến Đường</div></th>
+                        <th class="p-4 text-sm font-bold text-lime-400"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr class="border-y dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700">
+                            <td class="p-4 text-sm text-gray-700 dark:text-white">@{ i++; } @i</td>
+                            <td class="p-4 text-sm text-gray-700 dark:text-white">@Html.DisplayFor(modelItem => item.NameTrain)</td>
+                            <td class="p-4 text-sm text-gray-700 dark:text-white">@item.DateStart.Value.ToString("HH:mm dd-MM-yyyy")</td>
+                            <td class="p-4 text-sm text-gray-700 dark:text-white">@Html.DisplayFor(modelItem => item.CoefficientTrain)</td>
+                            @* <td class="p-4 text-sm text-gray-700 dark:text-white">@item.TrainRouteName</td> *@
+                            <td class="p-4 flex space-x-2">
+                                <button class="edit-btn flex items-center justify-center text-gray-600 dark:text-gray-300 hover:text-lime-400 dark:hover:text-lime-400 w-8 h-8 rounded-full hover:bg-navy-600" 
+                                        data-id="@item.IdTrain" 
+                                        data-name="@item.NameTrain" 
+                                        data-date="@item.DateStart.Value.ToString("yyyy-MM-ddTHH:mm")" 
+                                        data-coefficient="@item.CoefficientTrain" 
+                                        data-route="@item.IdTrainRoute" 
+                                        title="Sửa">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                                    </svg>
+                                </button>
+                                <button class="delete-btn flex items-center justify-center text-gray-600 dark:text-gray-300 hover:text-lime-400 dark:hover:text-lime-400 w-8 h-8 rounded-full hover:bg-navy-600" 
+                                        data-id="@item.IdTrain" 
+                                        data-url="@Url.Action("Delete", "Trains", new { area = "Admin", id = item.IdTrain })" 
+                                        title="Xóa">
+                                    <svg class="w-5 h-5 text-lime-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5-4h4M10 10v6m4-6v6M5 7h14"></path>
+                                    </svg>
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Create/Edit Modal -->
+    <div id="createModal" class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 hidden">
+        <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-6 w-full max-w-md max-h-[80vh] overflow-y-auto shadow-lg">
+            <h2 id="modalTitle" class="text-xl font-bold text-gray-800 dark:text-white mb-4">Thêm Chuyến Xe Mới</h2>
+            <form id="trainForm" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" id="idTrain" name="IdTrain" />
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2" for="nameTrain">Tên Chuyến Xe <span class="text-lime-400">*</span></label>
+                    <div class="relative">
+                        <input type="text" id="nameTrain" name="NameTrain" class="w-full pt-3 pb-3 pr-3 pl-10 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-lime-400" 
+                               required minlength="2" pattern="[A-Za-z0-9\s]+" title="Tên chuyến xe chỉ chứa chữ cái, số và khoảng trắng" placeholder="Nhập tên chuyến xe" />
+                        <svg class="absolute left-3 top-1/3 -translate-y-1/2 w-5 h-5 text-lime-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                        </svg>
+                    </div>
+                    <p id="nameTrainError" class="text-sm text-lime-400 mt-1 hidden"></p>
+                    @if (ViewData.ModelState.ContainsKey("NameTrain"))
+                    {
+                        <p class="text-sm text-lime-400 mt-1">@ViewData.ModelState["NameTrain"]?.Errors.FirstOrDefault()?.ErrorMessage</p>
+                    }
+                </div>
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2" for="dateStart">Ngày Khởi Hành <span class="text-lime-400">*</span></label>
+                    <div class="relative">
+                        <input type="datetime-local" id="dateStart" name="DateStart" class="w-full pt-3 pb-3 pr-3 pl-10 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-lime-400" 
+                               required />
+                        <svg class="absolute left-3 top-1/3 -translate-y-1/2 w-5 h-5 text-lime-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                        </svg>
+                    </div>
+                    <p id="dateStartError" class="text-sm text-lime-400 mt-1 hidden"></p>
+                    @if (ViewData.ModelState.ContainsKey("DateStart"))
+                    {
+                        <p class="text-sm text-lime-400 mt-1">@ViewData.ModelState["DateStart"]?.Errors.FirstOrDefault()?.ErrorMessage</p>
+                    }
+                </div>
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2" for="coefficientTrain">Hệ Số Chuyến Xe <span class="text-lime-400">*</span></label>
+                    <div class="relative">
+                        <input type="number" id="coefficientTrain" name="CoefficientTrain" class="w-full pt-3 pb-3 pr-3 pl-10 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-lime-400" 
+                               required min="0.1" step="0.1" placeholder="Nhập hệ số" />
+                        <svg class="absolute left-3 top-1/3 -translate-y-1/2 w-5 h-5 text-lime-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m-3 3v6m-6-6h12a2 2 0 012 2v6a2 2 0 01-2 2H6a2 2 0 01-2-2v-6a2 2 0 012-2z"></path>
+                        </svg>
+                    </div>
+                    <p id="coefficientTrainError" class="text-sm text-lime-400 mt-1 hidden"></p>
+                    @if (ViewData.ModelState.ContainsKey("CoefficientTrain"))
+                    {
+                        <p class="text-sm text-lime-400 mt-1">@ViewData.ModelState["CoefficientTrain"]?.Errors.FirstOrDefault()?.ErrorMessage</p>
+                    }
+                </div>
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2" for="idTrainRoute">Tuyến Đường <span class="text-lime-400">*</span></label>
+                    <div class="relative">
+                        <select id="idTrainRoute" name="IdTrainRoute" class="w-full pt-3 pb-3 pr-3 pl-10 border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-lime-400" required>
+                            <option value="">Chọn tuyến đường</option>
+                            @foreach (var route in (IEnumerable<TrainRouteDto>)ViewData["TrainRoutes"])
+                            {
+                                <option value="@route.IdTrainRoute">@route.PointStart - @route.PointEnd</option>
+                            }
+                        </select>
+                        <svg class="absolute left-3 top-1/3 -translate-y-1/2 w-5 h-5 text-lime-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                        </svg>
+                    </div>
+                    <p id="idTrainRouteError" class="text-sm text-lime-400 mt-1 hidden"></p>
+                    @if (ViewData.ModelState.ContainsKey("IdTrainRoute"))
+                    {
+                        <p class="text-sm text-lime-400 mt-1">@ViewData.ModelState["IdTrainRoute"]?.Errors.FirstOrDefault()?.ErrorMessage</p>
+                    }
+                </div>
+                <div class="flex justify-end space-x-2">
+                    <button type="button" id="closeModal" class="px-4 py-2 text-white rounded-lg hover:bg-gray-600 transition">Hủy</button>
+                    <button type="submit" id="submitButton" class="px-12 py-2 bg-lime-400 text-white rounded-lg hover:bg-lime-500 transition">Tạo</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div id="deleteModal" class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 hidden">
+        <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-6 w-full max-w-sm shadow-lg">
+            <h2 class="text-lg font-bold text-gray-800 dark:text-white mb-4">Xác Nhận Xóa</h2>
+            <p class="text-sm text-gray-600 dark:text-gray-300 mb-6">Bạn có chắc muốn xóa chuyến xe này?</p>
+            <form asp-action="Delete" asp-controller="Trains" asp-area="Admin" id="deleteForm" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="id" id="deleteId" />
+                <div class="flex justify-end space-x-2">
+                    <button type="button" id="cancelDelete" class="px-4 py-2 text-white rounded-lg hover:bg-gray-600 transition">Hủy</button>
+                    <button type="submit" id="confirmDelete" class="px-4 py-2 bg-lime-400 text-white rounded-lg hover:bg-lime-500 transition">Xóa</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Cấu hình Toastr
+        toastr.options = {
+            positionClass: 'toast-bottom-right',
+            progressBar: true,
+            timeOut: 5000
+        };
+
+        // Hiển thị thông báo từ TempData
+        const successMessage = '@TempData["SuccessMessage"]';
+        const errorMessage = '@TempData["ErrorMessage"]';
+        if (successMessage) {
+            toastr.success(successMessage);
+        }
+        if (errorMessage) {
+            toastr.error(errorMessage);
+        }
+
+        // Modal Tạo/Chỉnh sửa
+        const createModal = document.getElementById('createModal');
+        const createModalToggle = document.getElementById('createModalToggle');
+        const closeModal = document.getElementById('closeModal');
+        const trainForm = document.getElementById('trainForm');
+        const modalTitle = document.getElementById('modalTitle');
+        const submitButton = document.getElementById('submitButton');
+        const idTrain = document.getElementById('idTrain');
+        const nameTrain = document.getElementById('nameTrain');
+        const dateStart = document.getElementById('dateStart');
+        const coefficientTrain = document.getElementById('coefficientTrain');
+        const idTrainRoute = document.getElementById('idTrainRoute');
+
+        createModalToggle.addEventListener('click', () => {
+            resetModal('create');
+            createModal.classList.toggle('hidden');
+        });
+
+        closeModal.addEventListener('click', resetModal);
+        createModal.addEventListener('click', (e) => {
+            if (e.target === createModal) resetModal();
+        });
+
+        function resetModal(mode = 'create') {
+            createModal.classList.add('hidden');
+            trainForm.reset();
+            document.getElementById('nameTrainError').classList.add('hidden');
+            document.getElementById('dateStartError').classList.add('hidden');
+            document.getElementById('coefficientTrainError').classList.add('hidden');
+            document.getElementById('idTrainRouteError').classList.add('hidden');
+            idTrain.value = '';
+            if (mode === 'create') {
+                modalTitle.textContent = 'Thêm Chuyến Xe Mới';
+                submitButton.textContent = 'Tạo';
+                trainForm.action = '@Url.Action("Create", "Trains", new { area = "Admin" })';
+            }
+        }
+
+        // Xác thực Form
+        trainForm.addEventListener('submit', (e) => {
+            const nameTrainError = document.getElementById('nameTrainError');
+            const dateStartError = document.getElementById('dateStartError');
+            const coefficientTrainError = document.getElementById('coefficientTrainError');
+            const idTrainRouteError = document.getElementById('idTrainRouteError');
+            let isValid = true;
+
+            nameTrainError.classList.add('hidden');
+            dateStartError.classList.add('hidden');
+            coefficientTrainError.classList.add('hidden');
+            idTrainRouteError.classList.add('hidden');
+
+            if (!nameTrain.value.match(/^[A-Za-z0-9\s]+$/)) {
+                nameTrainError.textContent = 'Tên chuyến xe chỉ chứa chữ cái, số và khoảng trắng';
+                nameTrainError.classList.remove('hidden');
+                isValid = false;
+            }
+            if (new Date(dateStart.value) < new Date()) {
+                dateStartError.textContent = 'Ngày khởi hành phải là ngày trong tương lai';
+                dateStartError.classList.remove('hidden');
+                isValid = false;
+            }
+            if (coefficientTrain.value <= 0) {
+                coefficientTrainError.textContent = 'Hệ số chuyến xe phải lớn hơn 0';
+                coefficientTrainError.classList.remove('hidden');
+                isValid = false;
+            }
+            if (!idTrainRoute.value) {
+                idTrainRouteError.textContent = 'Vui lòng chọn tuyến đường';
+                idTrainRouteError.classList.remove('hidden');
+                isValid = false;
+            }
+
+            if (!isValid) e.preventDefault();
+        });
+
+        // Chỉnh sửa
+        document.querySelectorAll('.edit-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                idTrain.value = btn.dataset.id;
+                nameTrain.value = btn.dataset.name;
+                dateStart.value = btn.dataset.date;
+                coefficientTrain.value = btn.dataset.coefficient;
+                idTrainRoute.value = btn.dataset.route;
+                modalTitle.textContent = 'Chỉnh Sửa Chuyến Xe';
+                submitButton.textContent = 'Sửa';
+                trainForm.action = '@Url.Action("Edit", "Trains", new { area = "Admin" })';
+                createModal.classList.toggle('hidden');
+            });
+        });
+
+        // Modal Xóa
+        const deleteModal = document.getElementById('deleteModal');
+        const cancelDelete = document.getElementById('cancelDelete');
+        const confirmDelete = document.getElementById('confirmDelete');
+        const deleteForm = document.getElementById('deleteForm');
+        const deleteId = document.getElementById('deleteId');
+
+        document.querySelectorAll('.delete-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                deleteId.value = btn.dataset.id;
+                deleteForm.action = btn.dataset.url;
+                deleteModal.classList.toggle('hidden');
+            });
+        });
+
+        cancelDelete.addEventListener('click', resetDeleteModal);
+        deleteModal.addEventListener('click', (e) => {
+            if (e.target === deleteModal) resetDeleteModal();
+        });
+
+        function resetDeleteModal() {
+            deleteModal.classList.add('hidden');
+            deleteId.value = '';
+            deleteForm.action = '';
+        }
+
+        confirmDelete.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (deleteForm.action && deleteId.value) {
+                deleteForm.submit();
+            }
+        });
+    </script>
+}

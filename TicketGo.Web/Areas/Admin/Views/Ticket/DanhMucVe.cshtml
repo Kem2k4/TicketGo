@@ -1,0 +1,52 @@
+﻿@using X.PagedList.Mvc.Core
+@using X.PagedList.Mvc
+@model X.PagedList.IPagedList<TicketGo.Domain.Entities.Ticket>
+
+
+@{
+    ViewData["Title"] = "Danh Mục Vé";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<h1>Danh Mục Vé</h1>
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+<p>
+    <a asp-action="ThemVeMoi">Thêm Vé Mới</a>
+</p>
+
+<p>@TempData["Message"]</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Mã Vé</th>
+            <th>Ngày Đi</th>
+            <th>Giá Vé</th>
+            <th>Ghế</th>
+            <th>Tàu</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@Html.DisplayFor(modelItem => item.IdTicket)</td>
+                <td>@Html.DisplayFor(modelItem => item.Date)</td>
+                <td>@Html.DisplayFor(modelItem => item.Price)</td>
+                <td>@Html.DisplayFor(modelItem => item.IdSeatNavigation.NameSeat)</td>
+                <td>@Html.DisplayFor(modelItem => item.IdTrainNavigation.NameTrain)</td>
+                <td>
+                    <a asp-action="SuaVe" asp-route-id="@item.IdTicket">Sửa</a> |
+                    <a asp-action="XoaVe" asp-route-id="@item.IdTicket">Xóa</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div>
+    @Html.PagedListPager(Model, page => Url.Action("DanhMucVe", new { page }), new PagedListRenderOptions { DisplayItemSliceAndTotal = true })
+</div>
+

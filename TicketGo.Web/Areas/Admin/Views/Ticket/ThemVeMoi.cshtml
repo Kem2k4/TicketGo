@@ -1,0 +1,108 @@
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@model TicketGo.Domain.Entities.Ticket
+
+@{
+    ViewData["Title"] = "ThemVeMoi";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<h1>ThemVeMoi</h1>
+<hr />
+
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="ThemVeMoi" method="post">
+            <div class="form-group">
+                <label asp-for="Date" class="control-label"></label>
+                <input asp-for="Date" class="form-control" type="date" />
+                <span asp-validation-for="Date" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Price" class="control-label"></label>
+                <input asp-for="Price" class="form-control" type="number" />
+                <span asp-validation-for="Price" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="IdSeat" class="control-label"></label>
+                <select asp-for="IdSeat" class="form-control" asp-items="ViewBag.IdSeat"></select>
+                <span asp-validation-for="IdSeat" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="IdTrain" class="control-label"></label>
+                <select asp-for="IdTrain" class="form-control" asp-items="ViewBag.IdTrain"></select>
+                <span asp-validation-for="IdTrain" class="text-danger"></span>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Lưu</button>
+        </form>
+    </div>
+   
+
+</div>
+
+<div>
+    <a asp-action="DanhMucVe">Back to List</a>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    }
+
+
+@*@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@model DO_AN.Models.Ticket
+
+@{
+    ViewData["Title"] = "ThemVeMoi";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<h1>ThemVeMoi</h1>
+
+<h4>Ticket</h4>
+<hr />
+
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="ThemVeMoi" method="post">
+
+            <div class="form-group">
+                <label asp-for="IdTicket" class="control-label"></label>
+                <input asp-for="IdTicket" class="form-control" />
+                <span asp-validation-for="IdTicket" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Date" class="control-label"></label>
+                <input asp-for="Date" class="form-control" />
+                <span asp-validation-for="Date" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Price" class="control-label"></label>
+                <input asp-for="Price" class="form-control" />
+                <span asp-validation-for="Price" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="IdSeat" class="control-label"></label>
+                <select asp-for="IdSeat" class="form-control" asp-items="ViewBag.IdSeat"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="IdTrain" class="control-label"></label>
+                <select asp-for="IdTrain" class="form-control" asp-items="ViewBag.IdTrain"></select>
+            </div>
+            <!-- Các trường khác của form ở đây -->
+            <button type="submit" class="btn btn-primary">Lưu</button>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="DanhMucVe">Back to List</a>
+</div>*@
